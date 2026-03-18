@@ -1,5 +1,5 @@
 # 1st stage, build the native image
-FROM ghcr.io/graalvm/graalvm-community:21.0.0-ol9 AS build
+FROM ghcr.io/graalvm/native-image-community:21 AS build
 
 # Install Maven
 RUN microdnf install -y maven && microdnf clean all
@@ -10,9 +10,9 @@ WORKDIR /helidon
 COPY pom.xml .
 RUN mvn package -Pnative-image -Dnative.image.skip -Dmaven.test.skip -Declipselink.weave.skip -q || true
 
-# Build the native image (non-static, compatible with aarch64/arm64)
+# Build the native image
 COPY src src
-RUN mvn package -Pnative-image -DskipTests -q
+RUN mvn package -Pnative-image -DskipTests
 
 # 2nd stage, minimal runtime image
 FROM oraclelinux:9-slim

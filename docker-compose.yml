@@ -6,7 +6,7 @@ services:
     hostname: helidon-nima-app
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.native
     ports:
       - "9292:9292"
     environment:
@@ -16,6 +16,8 @@ services:
         condition: service_healthy
     networks:
       - network_db
+    profiles:
+      - jvm
 
   postgres:
     image: postgres:16-alpine

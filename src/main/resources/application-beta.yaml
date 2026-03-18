@@ -4,7 +4,7 @@ app:
 db:
   source: jdbc
   connection:
-    url: jdbc:postgresql://postgres:5432/sales
+    url: jdbc:postgresql://postgres:5432/sales?sslmode=disable
     username: helidon
     password: helidon123
     poolName: helidonPool
