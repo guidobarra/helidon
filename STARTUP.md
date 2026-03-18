@@ -52,7 +52,45 @@ java -jar target/helidon-nima.jar
 
 ## 3. Ejecucion con Docker Compose
 
-Levanta la app y PostgreSQL juntos:
+La configuracion se centraliza en el archivo `.env`. Editar los valores ahi y correr siempre el mismo comando:
+
+```bash
+docker compose up -d --build
+```
+
+### Archivo `.env`
+
+| Variable | Descripcion | Default |
+|----------|-------------|---------|
+| `DOCKERFILE` | Dockerfile a usar: `Dockerfile`, `Dockerfile.jlink` o `Dockerfile.native` | `Dockerfile` |
+| `APP_CPUS` | Limite de CPUs del container | `1.0` |
+| `APP_MEMORY` | Limite de memoria del container | `256M` |
+| `JAVA_XMS` | Heap inicial (`-Xms`). Vacio = default del runtime | _(vacio)_ |
+| `JAVA_XMX` | Heap maximo (`-Xmx`). Vacio = default del runtime | _(vacio)_ |
+
+Ejemplo para JVM:
+
+```env
+DOCKERFILE=Dockerfile
+APP_CPUS=2.0
+APP_MEMORY=512M
+JAVA_XMS=128m
+JAVA_XMX=256m
+```
+
+Ejemplo para native:
+
+```env
+DOCKERFILE=Dockerfile.native
+APP_CPUS=1.0
+APP_MEMORY=128M
+JAVA_XMS=16m
+JAVA_XMX=64m
+```
+
+### Comandos
+
+Levantar app y PostgreSQL:
 
 ```bash
 docker compose up -d --build
@@ -62,12 +100,6 @@ Reconstruir solo la app (sin cache):
 
 ```bash
 docker compose build --no-cache helidon-nima-app
-```
-
-Reconstruir y levantar:
-
-```bash
-docker compose up -d --build helidon-nima-app
 ```
 
 Ver logs:
@@ -125,7 +157,7 @@ Artefacto: helidon-nima-jri/ (JRE custom + app empaquetados)
 Compila la app a un binario nativo con GraalVM Native Image. No necesita JVM para ejecutarse. Startup en milisegundos y consumo de memoria minimo, pero el build es lento (~5-10 min) y algunas librerias con reflection pueden necesitar configuracion adicional.
 
 ```
-Build: ghcr.io/graalvm/graalvm-community:21 (con perfil -Pnative-image)
+Build: ghcr.io/graalvm/native-image-community:21 (con perfil -Pnative-image)
 Runtime: oraclelinux:9-slim (OS minimo con glibc)
 Artefacto: helidon-nima (binario ejecutable)
 ```
@@ -157,6 +189,17 @@ docker run -p 9292:9292 \
   -e DB_CONNECTION_URL=jdbc:postgresql://host.docker.internal:5432/sales \
   -e DB_CONNECTION_USERNAME=helidon \
   -e DB_CONNECTION_PASSWORD=helidon123 \
+  helidon-nima-app
+```
+
+### Con limites de recursos y heap (native)
+
+```bash
+docker run -p 9292:9292 \
+  --cpus=1.0 --memory=128m \
+  -e HELIDON_CONFIG_PROFILE=beta \
+  -e JAVA_XMS=16m \
+  -e JAVA_XMX=64m \
   helidon-nima-app
 ```
 

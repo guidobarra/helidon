@@ -20,5 +20,5 @@ WORKDIR /helidon
 
 COPY --from=build /helidon/target/helidon-nima .
 
-ENTRYPOINT ["/bin/bash", "-c", "exec ./helidon-nima ${HELIDON_CONFIG_PROFILE:+-Dconfig.profile=$HELIDON_CONFIG_PROFILE}"]
+ENTRYPOINT ["/bin/bash", "-c", "exec ./helidon-nima ${JAVA_XMS:+-Xms$JAVA_XMS} ${JAVA_XMX:+-Xmx$JAVA_XMX} ${HELIDON_CONFIG_PROFILE:+-Dconfig.profile=$HELIDON_CONFIG_PROFILE}"]
 EXPOSE 9292

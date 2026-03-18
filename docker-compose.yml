@@ -6,18 +6,23 @@ services:
     hostname: helidon-nima-app
     build:
       context: .
-      dockerfile: ./Dockerfile.native
+      dockerfile: ${DOCKERFILE}
     ports:
       - "9292:9292"
     environment:
       HELIDON_CONFIG_PROFILE: beta
+      JAVA_XMS: ${JAVA_XMS}
+      JAVA_XMX: ${JAVA_XMX}
+    deploy:
+      resources:
+        limits:
+          cpus: "${APP_CPUS}"
+          memory: "${APP_MEMORY}"
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - network_db
-    profiles:
-      - jvm
 
   postgres:
     image: postgres:16-alpine
