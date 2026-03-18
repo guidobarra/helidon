@@ -1,0 +1,37 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: helidon-nima
+  labels:
+    app: helidon-nima
+spec:
+  type: ClusterIP
+  selector:
+    app: helidon-nima
+  ports:
+    - name: tcp
+      port: 9292
+      protocol: TCP
+      targetPort: 9292
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: helidon-nima
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helidon-nima
+  template:
+    metadata:
+      labels:
+        app: helidon-nima
+        version: v1
+    spec:
+      containers:
+      - name: helidon-nima
+        image: helidon-nima
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9292

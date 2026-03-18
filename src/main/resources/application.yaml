@@ -1,0 +1,18 @@
+server:
+  port: 9292
+  host: 0.0.0.0
+
+app:
+  name: '@project.artifactId@'
+  version: '@project.version@'
+  environment: dev
+
+db:
+  source: jdbc
+  connection:
+    url: jdbc:postgresql://localhost:5432/sales
+    username: helidon
+    password: helidon123
+    poolName: helidonPool
+    maximumPoolSize: 10
+

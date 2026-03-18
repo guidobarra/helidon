@@ -1,0 +1,47 @@
+services:
+
+  helidon-nima-app:
+    image: helidon-nima-app
+    container_name: helidon-nima-app
+    hostname: helidon-nima-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "9292:9292"
+    environment:
+      HELIDON_CONFIG_PROFILE: beta
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - network_db
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    hostname: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: sales
+      POSTGRES_USER: helidon
+      POSTGRES_PASSWORD: helidon123
+    volumes:
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U helidon -d sales"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - network_db
+
+volumes:
+  postgres_data:
+
+networks:
+  network_db:
+    name: network_db

@@ -1,0 +1,11 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern": "application\\.yaml$"},
+      {"pattern": "application-.*\\.yaml$"},
+      {"pattern": "logging\\.properties$"},
+      {"pattern": "META-INF/openapi\\.yaml$"},
+      {"pattern": "META-INF/native-image/.*"}
+    ]
+  }
+}

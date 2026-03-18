@@ -1,0 +1,19 @@
+# 1st stage, build the app
+FROM maven:3.9-eclipse-temurin-21 AS build
+
+WORKDIR /helidon
+
+# Cache Maven dependencies
+COPY pom.xml .
+RUN mvn package -Dmaven.test.skip -Declipselink.weave.skip -q || true
+
+# Build the custom Java Runtime Image
+COPY src src
+RUN mvn package -Pjlink-image -DskipTests -q
+
+# 2nd stage, runtime image with the JRI
+FROM debian:bookworm-slim
+WORKDIR /helidon
+COPY --from=build /helidon/target/helidon-nima-jri ./
+ENTRYPOINT ["/bin/bash", "/helidon/bin/start"]
+EXPOSE 9292
