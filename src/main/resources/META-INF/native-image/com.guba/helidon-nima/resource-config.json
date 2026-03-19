@@ -6,7 +6,9 @@
       {"pattern": "logging\\.properties$"},
       {"pattern": "META-INF/openapi\\.yaml$"},
       {"pattern": "META-INF/native-image/.*"},
-      {"pattern": "META-INF/services/.*"}
+      {"pattern": "META-INF/services/.*"},
+      {"pattern": "io/smallrye/openapi/ui/.*"},
+      {"pattern": "META-INF/resources/.*"}
     ]
   }
 }
