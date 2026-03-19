@@ -16,34 +16,32 @@ public class UserRepository {
 
     public List<User> findAll() {
         return dbClient.execute()
-                .query("SELECT * FROM users ORDER BY id")
+                .namedQuery("find-all")
                 .map(User::fromRow)
                 .toList();
     }
 
     public Optional<User> findById(long id) {
         return dbClient.execute()
-                .get("SELECT * FROM users WHERE id = ?", id)
+                .namedGet("find-by-id", id)
                 .map(User::fromRow);
     }
 
     public User save(User user) {
         long count = dbClient.execute()
-                .insert("INSERT INTO users (name, email) VALUES (?, ?)",
-                        user.getName(), user.getEmail());
+                .namedInsert("insert", user.getName(), user.getEmail());
         if (count == 0) {
             throw new IllegalStateException("Failed to insert user");
         }
         return dbClient.execute()
-                .get("SELECT * FROM users WHERE email = ?", user.getEmail())
+                .namedGet("find-by-email", user.getEmail())
                 .map(User::fromRow)
                 .orElseThrow();
     }
 
     public Optional<User> update(long id, User user) {
         long count = dbClient.execute()
-                .update("UPDATE users SET name = ?, email = ? WHERE id = ?",
-                        user.getName(), user.getEmail(), id);
+                .namedUpdate("update", user.getName(), user.getEmail(), id);
         if (count == 0) {
             return Optional.empty();
         }
@@ -52,7 +50,7 @@ public class UserRepository {
 
     public boolean delete(long id) {
         long count = dbClient.execute()
-                .delete("DELETE FROM users WHERE id = ?", id);
+                .namedDelete("delete", id);
         return count > 0;
     }
 }
